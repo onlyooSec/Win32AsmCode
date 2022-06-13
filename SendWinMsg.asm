@@ -1,3 +1,5 @@
+;这个文件是用来向ReceptionWinMsg.asm 程序的窗口发送消息的
+;试想怎么向另一个地址空间的窗口发送消息，传递数据呢?
 .386
 .model flat,stdcall
 option casemap:none 
