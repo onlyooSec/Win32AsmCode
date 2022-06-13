@@ -19,7 +19,7 @@ szBuffer db 256 dup (?)
 
 	.const
 szCaption db 'SendMessage',0
-szStart db 'Press Ok to start SendMessage, param: %08x1',0
+szStart db 'Press Ok to start SendMessage, param: %08x!',0
 szReturn db 'SendMessage returned!',0
 szDestClass db 'Window0',0
 szText db 'Text send to other windows',0
