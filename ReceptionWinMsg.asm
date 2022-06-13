@@ -1,3 +1,4 @@
+;这个程序是用来接收来自SendWinMsg.asm程序的消息的，并展示一些数据
 .386
 .model flat,stdcall
 option casemap:none
