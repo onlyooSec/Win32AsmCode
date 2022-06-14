@@ -1,3 +1,4 @@
+;接收WM_CPOYDATA消息的程序
 .386
 .model flat,stdcall
 option casemap:none
