@@ -11,7 +11,7 @@
 生成xxx.exe
 
 
-0x0:think and do 缺一不可
+0x0:欲戴王冠，必承其重
 0x1:hack for hack
 
 0x10:
