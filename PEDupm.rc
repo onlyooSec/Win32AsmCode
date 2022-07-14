@@ -1,0 +1,12 @@
+#include <resource.h>
+#define ICO_MAIN 0x1000 
+#define IDM_MAIN 0x2000
+#define IDM_OPEN 0x4000
+
+IDM_MAIN menu discardable
+BEGIN 
+	popup "File"
+	BEGIN 
+		menuitem "OpenFile",IDM_OPEN
+	END
+END
