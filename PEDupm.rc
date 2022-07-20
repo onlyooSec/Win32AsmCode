@@ -1,12 +1,29 @@
-#include <resource.h>
-#define ICO_MAIN 0x1000 
-#define IDM_MAIN 0x2000
-#define IDM_OPEN 0x4000
+#define DLG_MAIN 4096
+#define IDM_MAIN 8192
+#define IDM_OPEN 8193
+#define IDM_EXIT 8194
+#define IDM_1 16385
 
-IDM_MAIN menu discardable
-BEGIN 
-	popup "File"
-	BEGIN 
-		menuitem "OpenFile",IDM_OPEN
-	END
+#include <resource.h>
+
+DLG_MAIN DIALOGEX 50,50,183,168
+CAPTION "PE Dump"
+FONT 9,"宋体",0,0,0
+STYLE WS_POPUP|WS_VISIBLE|WS_CAPTION|WS_SYSMENU|DS_MODALFRAME
+MENU IDM_MAIN
+BEGIN
 END
+
+IDM_MAIN MENU
+BEGIN
+  POPUP "file"
+  BEGIN
+    MENUITEM "OpenFile",IDM_OPEN
+    MENUITEM "Exit",IDM_EXIT
+  END
+  POPUP "look"
+  BEGIN
+    MENUITEM "OriFile",IDM_1
+  END
+END
+
