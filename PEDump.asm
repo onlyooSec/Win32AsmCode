@@ -2,120 +2,74 @@
 .model flat,stdcall
 option casemap:none
 
- 
 include windows.inc
-include user32.inc
 include kernel32.inc
+include user32.inc
 include gdi32.inc
-includelib user32.lib
 includelib kernel32.lib
+includelib user32.lib
 includelib gdi32.lib
 
-ICO_MAIN equ 1000h
+
+
+DLG_MAIN equ 1000h
 IDM_MAIN equ 2000h
-IDM_OPEN equ 4000h
+IDM_OPEN equ 2001h
+IDM_EXIT equ 2002h
+IDM_1 equ 4001h
 
-	.data?
 
-hInstance dd ? ;当前程序模块句柄
-hWinMain dd ? ;主窗口句柄
-hMenu dd ? ;菜单句柄
 
+	.data 
+
+hInstance dd ?
+hWinMain dd ?
+hMenu dd ?
 	.const
-	
-szClassName db 'WinClass',0
-szWinMainName db 'Window',0
 
-	.code
-	
-	
+szTest db 'TestBox',0
 
-_ProcWinMain proc uses ebx esi edi,hWnd,uMsg,wParam,lParam
-	
-	LOCAL @stPs:PAINTSTRUCT
-	
-	mov eax, uMsg
-	.if eax == WM_CLOSE
-		invoke DestroyWindow,hWnd
-		invoke PostQuitMessage,NULL
-	.elseif eax == WM_PAINT
-		invoke BeginPaint,hWnd,addr @stPs
-		invoke EndPaint,hWnd,addr @stPs
-	.else 
-		invoke DefWindowProc,hWnd,uMsg,wParam,lParam
-		ret
-	.endif
-	xor eax,eax	
-	ret
+	.code 
 
-_ProcWinMain endp
-
-_WinMain proc 
+_init proc 
+	LOCAL @szBuffer[1024]:byte
 	
-	LOCAL @uMsg:MSG
-	LOCAL @stWC:WNDCLASSEX
-
-	;注册窗口类
-	invoke GetModuleHandle,NULL
-	mov hInstance,eax
-		
-	;加载菜单资源
 	invoke LoadMenu,hInstance,IDM_MAIN
 	mov hMenu,eax
 	
-	
-	mov @stWC.cbSize,sizeof WNDCLASSEX
-	mov @stWC.style,CS_HREDRAW or CS_VREDRAW
-	mov @stWC.lpfnWndProc,offset _ProcWinMain
-	mov @stWC.cbClsExtra,0
-	mov @stWC.cbWndExtra,0
-	push hInstance
-	pop @stWC.hInstance
-	invoke LoadIcon,hInstance,IDI_WINLOGO
-	mov @stWC.hIcon,eax
-	mov @stWC.hIconSm,eax
-	invoke LoadCursor,NULL,IDC_ARROW
-	mov @stWC.hCursor,eax
-	xor eax,eax
-	mov @stWC.hbrBackground,COLOR_WINDOW+1
-	mov @stWC.lpszMenuName,NULL
-	mov @stWC.lpszClassName,offset szClassName
-	
-	invoke RegisterClassEx,addr @stWC
-	
-	;注册窗口类完成
-	
-	invoke CreateWindowEx,WS_EX_APPWINDOW,\
-	offset szClassName,offset szWinMainName,\
-	WS_OVERLAPPEDWINDOW,\
-	100,100,600,400,\
-	NULL,hMenu,hInstance,NULL
-	
-	mov hWinMain,eax
-	
-	invoke UpdateWindow,hWinMain
-	
-	invoke ShowWindow,hWinMain,SW_SHOWNORMAL
-	
-	;消息循环
-	
-	.while TRUE
-		
-		invoke GetMessage,addr @uMsg,NULL,0,0
-		
-		.break .if eax == 0
-			
-		invoke TranslateMessage,addr @uMsg
-		
-		invoke DispatchMessage,addr @uMsg
-		
-	.endw
+	invoke MessageBox,NULL,offset szTest,offset szTest,MB_OK
 	
 	ret
 
-_WinMain endp
+_init endp
 
-start: 	
-	call _WinMain
+
+_ProcDlgMain proc uses ebx edi esi,hWnd,uMsg,wParam,lParam
+	mov eax,uMsg
+	
+	.if eax == WM_CLOSE
+		invoke EndDialog,hWnd,NULL
+		
+	.elseif eax == WM_INITDIALOG
+		call _init
+		invoke LoadIcon,hInstance,IDI_WINLOGO
+		invoke SendMessage,hWnd,WM_SETICON,ICON_BIG,eax
+	.elseif eax == WM_COMMAND
+		mov eax,wParam
+		.if ax == IDOK
+			invoke EndDialog,hWnd,NULL
+		.endif
+	.else 
+		mov eax,FALSE
+		ret
+	.endif
+	mov eax,TRUE
+	ret
+_ProcDlgMain endp
+
+start:
+	invoke GetModuleHandle,NULL
+	mov hInstance,eax
+	invoke DialogBoxParam,hInstance,DLG_MAIN,NULL,offset _ProcDlgMain,NULL
 	invoke ExitProcess,NULL
 	end start
